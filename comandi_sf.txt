@@ -1,0 +1,40 @@
+>>> from django.contrib.auth.models import User
+>>> from news_portal.models import Author, Category, Post, Comment
+>>> user1 = User.objects.create_user(username='user1')
+>>> user2 = User.objects.create_user(username='user2')
+>>> author1 = Author.objects.create(user=user1)
+>>> author2 = Author.objects.create(user=user2)
+>>> cat1 = Category.objects.create(name='Спорт')
+>>> cat2 = Category.objects.create(name='Политика')
+>>> cat3 = Category.objects.create(name='Технологии')
+>>> cat4 = Category.objects.create(name='Игры')
+>>> post1 = Post.objects.create(author=author1, title='Статья 1', text='Текст статьи 1', post_type='AR')
+>>> post2 = Post.objects.create(author=author2, title='Статья 2', text='Текст статьи 2', post_type='AR')
+>>> news1 = Post.objects.create(author=author1, title='Новость 1', text='Текст новости 1', post_type='NW')
+>>> comment1 = Comment.objects.create(post=post1, user=user1, text='Хаха ну и статья')
+>>> comment2 = Comment.objects.create(post=post1, user=user2, text='Ну чет такое')
+>>> comment3 = Comment.objects.create(post=post2, user=user1, text='Совсем не интересно')
+>>> comment4 = Comment.objects.create(post=news1, user=user2, text='Это правда случилось? Я в шоке')
+>>> post1.like()
+>>> post1.like()
+>>> post2.like()
+>>> post2.dislike()
+>>> news1.like()
+>>> comment1.like()
+>>> comment2.like()
+>>> comment2.dislike()
+>>> comment3.like()
+>>> comment4.dislike()
+>>> author1.update_rating()
+>>> author2.update_rating()
+>>> best_author = Author.objects.order_by('-rating').first()
+>>> print(best_author.user.username, best_author.rating)
+user1 11
+>>> best_post = Post.objects.order_by('-rating').first()
+>>> print(best_post.created_at, best_post.author.user.username, best_post.rating, best_post.title, best_post.preview())
+2026-04-02 12:18:46.508097 user1 2 Статья 1 Текст статьи 1...
+>>> comments = Comment.objects.filter(post=best_post)
+>>> for c in comments: print(c.created_at, c.user.username, c.rating, c.text)
+2026-04-02 12:20:11.540222 user1 1 Хаха ну и статья
+2026-04-02 12:20:11.543396 user2 0 Ну чет такое
+>>> 
